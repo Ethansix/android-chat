@@ -54,8 +54,9 @@ public class AppService implements AppServiceProvider {
      * <br>
      * <br>
      */
-    public static String APP_SERVER_ADDRESS/*请仔细阅读上面的注释，http 前缀不能省略*/ = "http://wildfirechat.net:8888";
-//    public static String APP_SERVER_ADDRESS/*请仔细阅读上面的注释*/ = "https://app.wildfirechat.net";
+    public static String APP_SERVER_ADDRESS/* 请仔细阅读上面的注释，http 前缀不能省略 */ = "http://47.95.215.30/8888";
+    // public static String APP_SERVER_ADDRESS/*请仔细阅读上面的注释*/ =
+    // "https://app.wildfirechat.net";
 
     private AppService() {
 
@@ -78,10 +79,11 @@ public class AppService implements AppServiceProvider {
         params.put("mobile", mobile);
         params.put("password", password);
 
-        //如果是android pad设备，需要改这里，另外需要在ClientService对象中修改设备类型，请在ClientService代码中搜索"android pad"
-        //if（当前设备是android pad)
-        //  params.put("platform", new Integer(9));
-        //else
+        // 如果是android
+        // pad设备，需要改这里，另外需要在ClientService对象中修改设备类型，请在ClientService代码中搜索"android pad"
+        // if（当前设备是android pad)
+        // params.put("platform", new Integer(9));
+        // else
         params.put("platform", new Integer(2));
 
         try {
@@ -112,21 +114,21 @@ public class AppService implements AppServiceProvider {
         params.put("mobile", phoneNumber);
         params.put("code", authCode);
 
+        // Platform_iOS = 1,
+        // Platform_Android = 2,
+        // Platform_Windows = 3,
+        // Platform_OSX = 4,
+        // Platform_WEB = 5,
+        // Platform_WX = 6,
+        // Platform_linux = 7,
+        // Platform_iPad = 8,
+        // Platform_APad = 9,
 
-        //Platform_iOS = 1,
-        //Platform_Android = 2,
-        //Platform_Windows = 3,
-        //Platform_OSX = 4,
-        //Platform_WEB = 5,
-        //Platform_WX = 6,
-        //Platform_linux = 7,
-        //Platform_iPad = 8,
-        //Platform_APad = 9,
-
-        //如果是android pad设备，需要改这里，另外需要在ClientService对象中修改设备类型，请在ClientService代码中搜索"android pad"
-        //if（当前设备是android pad)
-        //  params.put("platform", new Integer(9));
-        //else
+        // 如果是android
+        // pad设备，需要改这里，另外需要在ClientService对象中修改设备类型，请在ClientService代码中搜索"android pad"
+        // if（当前设备是android pad)
+        // params.put("platform", new Integer(9));
+        // else
         params.put("platform", new Integer(2));
 
         try {
@@ -149,7 +151,6 @@ public class AppService implements AppServiceProvider {
             }
         });
     }
-
 
     public void resetPassword(String mobile, String code, String password, SimpleCallback<StatusResult> callback) {
         String url = APP_SERVER_ADDRESS + "/reset_pwd";
@@ -305,10 +306,9 @@ public class AppService implements AppServiceProvider {
         });
     }
 
-
     @Override
     public void getGroupAnnouncement(String groupId, AppServiceProvider.GetGroupAnnouncementCallback callback) {
-        //从SP中获取到历史数据callback回去，然后再从网络刷新
+        // 从SP中获取到历史数据callback回去，然后再从网络刷新
         String url = APP_SERVER_ADDRESS + "/get_group_announcement";
 
         Map<String, Object> params = new HashMap<>(2);
@@ -326,10 +326,10 @@ public class AppService implements AppServiceProvider {
         });
     }
 
-
     @Override
-    public void updateGroupAnnouncement(String groupId, String announcement, AppServiceProvider.UpdateGroupAnnouncementCallback callback) {
-        //更新到应用服务，再保存到本地SP中
+    public void updateGroupAnnouncement(String groupId, String announcement,
+            AppServiceProvider.UpdateGroupAnnouncementCallback callback) {
+        // 更新到应用服务，再保存到本地SP中
         String url = APP_SERVER_ADDRESS + "/put_group_announcement";
 
         Map<String, Object> params = new HashMap<>(2);
@@ -390,22 +390,23 @@ public class AppService implements AppServiceProvider {
             // 重复上传最后一个日志文件，因为上传之后，还会追加内容
             if (!sp.contains(path) || i == filePaths.size() - 1) {
                 toUploadCount++;
-                OKHttpHelper.upload(url, null, file, MediaType.get("application/octet-stream"), new SimpleCallback<Void>() {
-                    @Override
-                    public void onUiSuccess(Void aVoid) {
-                        if (callback != null) {
-                            callback.onSuccess(url);
-                        }
-                        sp.edit().putBoolean(path, true).commit();
-                    }
+                OKHttpHelper.upload(url, null, file, MediaType.get("application/octet-stream"),
+                        new SimpleCallback<Void>() {
+                            @Override
+                            public void onUiSuccess(Void aVoid) {
+                                if (callback != null) {
+                                    callback.onSuccess(url);
+                                }
+                                sp.edit().putBoolean(path, true).commit();
+                            }
 
-                    @Override
-                    public void onUiFailure(int code, String msg) {
-                        if (callback != null) {
-                            callback.onUiFailure(code, msg);
-                        }
-                    }
-                });
+                            @Override
+                            public void onUiFailure(int code, String msg) {
+                                if (callback != null) {
+                                    callback.onUiFailure(code, msg);
+                                }
+                            }
+                        });
             }
         }
         if (toUploadCount == 0) {
@@ -456,19 +457,20 @@ public class AppService implements AppServiceProvider {
                     List<FavoriteItem> favoriteItems = new ArrayList<>();
                     for (int i = 0; i < items.length(); i++) {
                         JSONObject itemObj = items.getJSONObject(i);
-                        Conversation conversation = new Conversation(Conversation.ConversationType.type(itemObj.getInt("convType")), itemObj.getString("convTarget"), itemObj.getInt("convLine"));
+                        Conversation conversation = new Conversation(
+                                Conversation.ConversationType.type(itemObj.getInt("convType")),
+                                itemObj.getString("convTarget"), itemObj.getInt("convLine"));
                         FavoriteItem item = new FavoriteItem(itemObj.getInt("id"),
-                            itemObj.optLong("messageUid"),
-                            itemObj.getInt("type"),
-                            itemObj.getLong("timestamp"),
-                            conversation,
-                            itemObj.getString("origin"),
-                            itemObj.getString("sender"),
-                            itemObj.getString("title"),
-                            itemObj.getString("url"),
-                            itemObj.getString("thumbUrl"),
-                            itemObj.getString("data")
-                        );
+                                itemObj.optLong("messageUid"),
+                                itemObj.getInt("type"),
+                                itemObj.getLong("timestamp"),
+                                conversation,
+                                itemObj.getString("origin"),
+                                itemObj.getString("sender"),
+                                itemObj.getString("title"),
+                                itemObj.getString("url"),
+                                itemObj.getString("thumbUrl"),
+                                itemObj.getString("data"));
 
                         favoriteItems.add(item);
                     }
@@ -515,15 +517,16 @@ public class AppService implements AppServiceProvider {
 
     public static void validateConfig(Context context) {
         if (TextUtils.isEmpty(Config.IM_SERVER_HOST)
-            || Config.IM_SERVER_HOST.startsWith("http")
-            || Config.IM_SERVER_HOST.contains(":")
-            || TextUtils.isEmpty(APP_SERVER_ADDRESS)
-            || (!APP_SERVER_ADDRESS.startsWith("http") && !APP_SERVER_ADDRESS.startsWith("https"))
-            || Config.IM_SERVER_HOST.equals("127.0.0.1")
-            || APP_SERVER_ADDRESS.contains("127.0.0.1")
-            || (!Config.IM_SERVER_HOST.contains("wildfirechat.net") && APP_SERVER_ADDRESS.contains("wildfirechat.net"))
-            || (Config.IM_SERVER_HOST.contains("wildfirechat.net") && !APP_SERVER_ADDRESS.contains("wildfirechat.net"))
-        ) {
+                || Config.IM_SERVER_HOST.startsWith("http")
+                || Config.IM_SERVER_HOST.contains(":")
+                || TextUtils.isEmpty(APP_SERVER_ADDRESS)
+                || (!APP_SERVER_ADDRESS.startsWith("http") && !APP_SERVER_ADDRESS.startsWith("https"))
+                || Config.IM_SERVER_HOST.equals("127.0.0.1")
+                || APP_SERVER_ADDRESS.contains("127.0.0.1")
+                || (!Config.IM_SERVER_HOST.contains("wildfirechat.net")
+                        && APP_SERVER_ADDRESS.contains("wildfirechat.net"))
+                || (Config.IM_SERVER_HOST.contains("wildfirechat.net")
+                        && !APP_SERVER_ADDRESS.contains("wildfirechat.net"))) {
             Toast.makeText(context, "配置错误，请检查配置，应用即将关闭...", Toast.LENGTH_LONG).show();
             new Handler().postDelayed(() -> {
                 throw new IllegalArgumentException("config error\n 参数配置错误\n请仔细阅读配置相关注释，并检查配置!\n");
